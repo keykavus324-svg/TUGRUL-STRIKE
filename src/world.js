@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { pbr } from './textures.js';
 
 export class World {
-  constructor(scene, T) {
+  constructor(scene, T, renderer = null) {
     this.scene = scene;
     this.T = T;
+    this.renderer = renderer;
     this.colliders = []; // {min,max}
     this.spawnPoints = [];
     this.patrols = [];
@@ -98,11 +99,14 @@ export class World {
     S.fog = new THREE.FogExp2(0xd8b078, 0.011);
 
     // environment reflections from sky
-    const pmrem = new THREE.PMREMGenerator(this.renderer);
-    const envScene = new THREE.Scene();
-    envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50, 16, 12), skyMat.clone()));
-    const envRT = pmrem.fromScene(envScene, 0.04);
-    S.environment = envRT.texture;
+    if (this.renderer) {
+      const pmrem = new THREE.PMREMGenerator(this.renderer);
+      const envScene = new THREE.Scene();
+      envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), skyMat.clone()));
+      const envRT = pmrem.fromScene(envScene, 0.04);
+      S.environment = envRT.texture;
+      pmrem.dispose();
+    }
 
     // ---------- GROUND ----------
     const sandMat = pbr(T.clone(T.sand, 26, 26), { roughness: 1, envMapIntensity: 0.25 });
