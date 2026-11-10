@@ -25,9 +25,9 @@ export function makeGlyphAtlas() {
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = '600 15px "Share Tech Mono", "Courier New", monospace';
+  ctx.font = '700 16px "Share Tech Mono", "Courier New", monospace';
   ctx.shadowColor = 'rgba(255,255,255,0.9)';
-  ctx.shadowBlur = 3;
+  ctx.shadowBlur = 2.5;
   for (let i = 0; i < RAMP.length; i++) {
     const gx = (i % COLS) * CELL + CELL / 2;
     const gy = Math.floor(i / COLS) * CELL + CELL / 2 + 1;
@@ -48,7 +48,7 @@ const AsciiShader = {
     uAtlas: { value: null },
     uCells: { value: new THREE.Vector2(160, 68) }, // ekran genelindeki karakter sayısı
     uGlyphCount: { value: RAMP.length },
-    uTint: { value: new THREE.Color(1.0, 0.70, 0.17) }, // amber phosphor
+    uTint: { value: new THREE.Color(1.0, 0.72, 0.22) }, // amber phosphor
     uTime: { value: 0 },
   },
   vertexShader: /* glsl */`
@@ -70,6 +70,8 @@ const AsciiShader = {
     float hash(vec2 p) {
       return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
     }
+    vec3 sceneAt(vec2 uv) { return texture2D(tDiffuse, uv).rgb; }
+    float lumOf(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 
     void main() {
       vec2 cell = floor(vUv * uCells);
@@ -78,35 +80,35 @@ const AsciiShader = {
       vec2 hc = 0.5 / uCells;
 
       // 2x2 örnek ortalaması — kararlı parlaklık
-      vec3 col = (texture2D(tDiffuse, center + vec2(-hc.x, -hc.y)).rgb
-                + texture2D(tDiffuse, center + vec2( hc.x, -hc.y)).rgb
-                + texture2D(tDiffuse, center + vec2(-hc.x,  hc.y)).rgb
-                + texture2D(tDiffuse, center + vec2( hc.x,  hc.y)).rgb) * 0.25;
+      vec3 col = (sceneAt(center + vec2(-hc.x, -hc.y))
+                + sceneAt(center + vec2( hc.x, -hc.y))
+                + sceneAt(center + vec2(-hc.x,  hc.y))
+                + sceneAt(center + vec2( hc.x,  hc.y))) * 0.25;
+      float lum = lumOf(col);
 
-      float lum = dot(col, vec3(0.2126, 0.7152, 0.0722));
+      // çift eksenli kenar tespiti — dikey + yatay detay
+      float lx = lumOf(sceneAt(center + vec2( hc.x * 2.0, 0.0))) - lumOf(sceneAt(center - vec2( hc.x * 2.0, 0.0)));
+      float ly = lumOf(sceneAt(center + vec2(0.0,  hc.y * 2.0))) - lumOf(sceneAt(center - vec2(0.0,  hc.y * 2.0)));
+      float edge = clamp((abs(lx) + abs(ly)) * 2.1, 0.0, 1.0);
 
-      // yatay kenar kontrastı — detay glif yoğunluğu
-      vec3 side = (texture2D(tDiffuse, center + vec2( hc.x * 2.0, 0.0)).rgb
-                 + texture2D(tDiffuse, center + vec2(-hc.x * 2.0, 0.0)).rgb) * 0.5;
-      float edge = clamp(distance(col, side) * 2.6, 0.0, 1.0);
+      // gamma + kaldırma: karanlıklar okunur, parlaklar dolu
+      float v = clamp(lum * 1.12 + edge * 0.55, 0.0, 1.0);
+      v = pow(v, 1.14);
+      v = smoothstep(0.015, 0.96, v);
+      v = v * 0.94 + 0.045;
 
-      float v = pow(clamp(lum * 0.72 + edge * 0.45, 0.0, 1.0), 1.32);
       float idx = floor(v * (uGlyphCount - 1.0) + 0.5);
-
       float glyphCol = mod(idx, 8.0);
       float glyphRow = floor(idx / 8.0);
-      // flipY=false atlas: v=0 üst satır → hücrenin üstü atlasın üstü
       vec2 aUv = (vec2(glyphCol, glyphRow) * 16.0
                 + vec2(cellUv.x * 14.0 + 1.0, (1.0 - cellUv.y) * 14.0 + 1.0)) / 128.0;
       float g = texture2D(uAtlas, aUv).r;
 
-      // phosphor tonu — sahnenin renginden biraz taşıyarak
-      vec3 tint = uTint * (0.62 + 0.55 * col);
-      // hafif titreşim (CRT canı)
-      float flick = 0.93 + 0.07 * hash(cell + floor(uTime * 11.0));
-      vec3 outCol = tint * g * (0.38 + 0.88 * v) * flick;
-      // tarama çizgileri
-      outCol *= 0.86 + 0.14 * sin(gl_FragCoord.y * 3.14159);
+      // phosphor tonu — sahnenin renginden biraz taşıyarak, artık daha parlak
+      vec3 tint = uTint * (0.78 + 0.42 * col);
+      float flick = 0.95 + 0.05 * hash(cell + floor(uTime * 11.0));
+      vec3 outCol = tint * g * (0.60 + 0.62 * v) * flick;
+      outCol *= 0.93 + 0.07 * sin(gl_FragCoord.y * 3.14159);
 
       gl_FragColor = vec4(outCol, 1.0);
     }
@@ -121,7 +123,7 @@ export function makeAsciiPass(atlasTex) {
       uAtlas: { value: atlasTex },
       uCells: { value: new THREE.Vector2(160, 68) },
       uGlyphCount: { value: RAMP.length },
-      uTint: { value: new THREE.Color(1.0, 0.70, 0.17) },
+      uTint: { value: new THREE.Color(1.0, 0.72, 0.22) },
       uTime: { value: 0 },
     },
   });

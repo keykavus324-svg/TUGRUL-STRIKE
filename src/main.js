@@ -103,7 +103,8 @@ function applyQuality() {
   else if (q === 'med') renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   else renderer.setPixelRatio(1);
   bloomPass.enabled = ascii ? true : q !== 'low';
-  bloomPass.strength = ascii ? 0.5 : (q === 'high' ? 0.32 : 0.22);
+  bloomPass.strength = ascii ? 0.55 : (q === 'high' ? 0.32 : 0.22);
+  if (gradePass) gradePass.uniforms.uVig.value = ascii ? 0.2 : 0.42;
   if (asciiPass) asciiPass.enabled = ascii;
   updateAsciiCells(asciiPass, innerWidth, innerHeight, q);
   document.body.classList.toggle('ascii-mode', ascii);
