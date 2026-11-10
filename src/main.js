@@ -16,7 +16,17 @@ import { GameAudio } from './audio.js';
 import { UI } from './ui.js';
 
 const canvas = document.getElementById('game');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+let renderer;
+try {
+  const probe = document.createElement('canvas');
+  if (!(window.WebGLRenderingContext && (probe.getContext('webgl2') || probe.getContext('webgl')))) {
+    throw new Error('Tarayiciniz WebGL desteklemiyor. Guncel bir Chrome/Edge/Firefox ile deneyin.');
+  }
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+} catch (err) {
+  if (window.__gameError) window.__gameError(err.message || String(err));
+  throw err;
+}
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
