@@ -56,7 +56,7 @@ let menuOrbit = 0;
 let settings = { sens: 1, fov: 90, quality: 'high', mute: false, shake: true };
 
 // ---------- POST ----------
-let composer, bloomPass;
+let composer, bloomPass, gradePass;
 function setupPost() {
   composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
@@ -86,7 +86,7 @@ function setupPost() {
   grade.name = 'grade';
   composer.addPass(grade);
   composer.addPass(new OutputPass());
-  composer.userData.grade = grade;
+  gradePass = grade;
 }
 say('Aşama 5/7 — Post-processing…');
 setupPost();
@@ -401,7 +401,7 @@ function loop() {
   requestAnimationFrame(loop);
   const dt = Math.min(0.05, clock.getDelta());
   const now = performance.now() / 1000;
-  if (composer.userData.grade) composer.userData.grade.uniforms.uTime.value = now;
+  if (gradePass) gradePass.uniforms.uTime.value = now;
 
   if (state === 'menu' || state === 'ended') {
     // cinematic orbit
