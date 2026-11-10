@@ -126,3 +126,95 @@ kbd{background:#2a1f10;border:1px solid #f5a62355;border-bottom-width:3px;paddin
 #tJump{right:116px;bottom:60px}
 #tReload{right:36px;bottom:210px;width:56px;height:56px}
 @media(pointer:fine){#touchUI{display:none!important}}
+
+/* ========== ASCII / CRT PHOSPHOR MODE ========== */
+#scanlines{display:none;position:fixed;inset:0;z-index:95;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.30) 0 1px,transparent 1px 3px)}
+#scanlines::after{content:'';position:absolute;left:0;right:0;height:160px;top:-25%;
+  background:linear-gradient(180deg,transparent,rgba(255,200,90,.07),transparent);
+  animation:scanBand 6.5s linear infinite}
+@keyframes scanBand{from{transform:translateY(-160px)}to{transform:translateY(130vh)}}
+body.ascii-mode #scanlines{display:block}
+
+body.ascii-mode{font-family:'Share Tech Mono',monospace;color:#ffc65c;background:#050403}
+body.ascii-mode *{font-family:'Share Tech Mono',monospace!important}
+
+/* loading */
+body.ascii-mode #loading{background:#050403;background-image:radial-gradient(rgba(255,198,92,.06) 1px,transparent 1.5px);background-size:22px 22px}
+body.ascii-mode .load-inner{position:relative;border:1px dashed rgba(255,198,92,.45);padding:34px 36px;background:rgba(8,5,2,.55)}
+body.ascii-mode .load-inner::before{content:'+';position:absolute;top:4px;left:8px;color:#ffc65c}
+body.ascii-mode .load-inner::after{content:'+';position:absolute;bottom:4px;right:8px;color:#ffc65c}
+body.ascii-mode .logo-small{font-size:24px;letter-spacing:8px;color:#ffd98a;text-shadow:0 0 14px rgba(255,176,0,.6)}
+body.ascii-mode .logo-small span{color:#ffb000}
+body.ascii-mode .load-bar-wrap{height:14px;background:#120c05;border:1px dashed rgba(255,198,92,.55);border-radius:0;overflow:hidden}
+body.ascii-mode #loadBar{background:repeating-linear-gradient(90deg,#ffc65c 0 10px,#2a1e08 10px 12px);transition:width .35s steps(24)}
+body.ascii-mode #loadText{color:#ffc65c;letter-spacing:3px}
+body.ascii-mode #loadText::after{content:' ▌';animation:blink 1s steps(1) infinite}
+.load-sys{margin-top:16px;font-size:10px;letter-spacing:2px;color:#7a5c28}
+@keyframes blink{50%{opacity:0}}
+
+/* menu */
+body.ascii-mode #menu{background:#050403}
+body.ascii-mode .menu-bg-grad{background:linear-gradient(90deg,rgba(4,3,1,.94) 0%,rgba(4,3,1,.68) 42%,rgba(4,3,1,.18) 75%)}
+body.ascii-mode .menu-kicker{color:#ffb000;border-top:1px dashed rgba(255,198,92,.4);border-bottom:1px dashed rgba(255,198,92,.4);padding:6px 2px;letter-spacing:8px;width:max-content}
+body.ascii-mode .game-title{font-size:clamp(48px,8vw,96px);color:#ffd98a;text-shadow:0 0 18px rgba(255,176,0,.55),0 0 60px rgba(255,140,0,.25)}
+body.ascii-mode .game-title span{color:#ffb000;-webkit-text-stroke:0}
+body.ascii-mode .menu-sub{color:#d8b96a}
+body.ascii-mode .menu-foot{color:#8a6a2c}
+body.ascii-mode .menu-foot::after{content:' ▌';animation:blink 1.1s steps(1) infinite;color:#ffc65c}
+body.ascii-mode .menu-stats b{color:#ffc65c;text-shadow:0 0 10px rgba(255,176,0,.5)}
+body.ascii-mode .menu-stats span{color:#8a6a2c}
+
+/* buttons — terminal köşeli */
+body.ascii-mode .btn-primary,body.ascii-mode .btn-ghost{clip-path:none;border-radius:0;background:transparent;color:#ffc65c;border:1px solid #ffc65c;text-shadow:0 0 8px rgba(255,198,92,.45);box-shadow:inset 0 0 14px rgba(255,176,0,.10);letter-spacing:3px}
+body.ascii-mode .btn-primary::before{content:'[ ';color:#ffb000}
+body.ascii-mode .btn-primary::after{content:' ]';color:#ffb000}
+body.ascii-mode .btn-ghost{border-color:rgba(255,198,92,.35);color:#d8b96a}
+body.ascii-mode .btn-ghost::before{content:'< ';color:#8a6a2c}
+body.ascii-mode .btn-ghost::after{content:' >';color:#8a6a2c}
+body.ascii-mode .btn-primary:hover,body.ascii-mode .btn-ghost:hover{background:#ffc65c;color:#150c02;text-shadow:none;box-shadow:0 0 22px rgba(255,176,0,.45);transform:none}
+
+/* briefing card — terminal penceresi */
+body.ascii-mode .brief-card{background:rgba(6,4,1,.85);border:1px dashed rgba(255,198,92,.4);border-left:1px dashed rgba(255,198,92,.4);box-shadow:0 0 34px rgba(255,150,0,.06),inset 0 0 40px rgba(255,150,0,.04)}
+body.ascii-mode .brief-card h3{color:#ffb000;letter-spacing:4px;border-bottom:1px dashed rgba(255,198,92,.3);padding-bottom:8px}
+body.ascii-mode .brief-card p{color:#d8b96a}
+body.ascii-mode .brief-card p::before{content:'> ';color:#8a6a2c}
+body.ascii-mode .threat{color:#ffb000}
+body.ascii-mode .threat-bar i{background:repeating-linear-gradient(90deg,#ffb000 0 6px,#33220a 6px 8px)}
+
+/* panels (howto / settings / pause) */
+body.ascii-mode .panel{background:rgba(7,5,2,.94);border:1px dashed rgba(255,198,92,.45);box-shadow:0 0 44px rgba(255,150,0,.08),inset 0 0 60px rgba(255,150,0,.05);border-radius:0}
+body.ascii-mode .panel h2{color:#ffd98a;letter-spacing:6px;text-shadow:0 0 12px rgba(255,176,0,.5)}
+body.ascii-mode kbd{border:1px solid #ffc65c;background:#14100a;color:#ffc65c;box-shadow:0 2px 0 #3a2c12}
+body.ascii-mode .set-row{color:#d8b96a}
+body.ascii-mode select,body.ascii-mode input[type="checkbox"]{accent-color:#ffb000}
+body.ascii-mode select{background:#14100a;color:#ffc65c;border:1px solid rgba(255,198,92,.4);font-family:'Share Tech Mono',monospace;padding:4px}
+body.ascii-mode .panel-note{color:#a88c54}
+
+/* HUD — soluk amber fosfor */
+body.ascii-mode .hud-box{background:rgba(8,6,2,.78);border:1px dashed rgba(255,198,92,.4);border-radius:0;color:#ffc65c;text-shadow:0 0 6px rgba(255,176,0,.4)}
+body.ascii-mode #timer.low{color:#ff5a3c;border-color:#ff5a3c}
+body.ascii-mode #objective{color:#ffc65c}
+body.ascii-mode .hp-label b{color:#ffd98a}
+body.ascii-mode .hp-bar{background:#181008}
+body.ascii-mode .hp-bar i{background:repeating-linear-gradient(90deg,#ffc65c 0 8px,#3a2a10 8px 10px)}
+body.ascii-mode .hp-bar i.hurt{background:repeating-linear-gradient(90deg,#ff5a3c 0 8px,#331008 8px 10px)}
+body.ascii-mode #ammo b{color:#ffd98a;text-shadow:0 0 14px rgba(255,176,0,.55)}
+body.ascii-mode #weaponName,body.ascii-mode #fireMode{color:#ffb000;letter-spacing:3px}
+body.ascii-mode #killfeed div{border-left:2px solid #ffb000;background:rgba(8,6,2,.72);color:#ffd98a}
+body.ascii-mode #centerMsg{color:#ffd98a;text-shadow:0 0 16px rgba(255,176,0,.65);letter-spacing:4px}
+body.ascii-mode #killBanner{color:#ffb000;text-shadow:0 0 18px rgba(255,176,0,.7)}
+body.ascii-mode #compassStrip span{color:#ffc65c}
+body.ascii-mode .compass-needle{border-top-color:#ffb000}
+body.ascii-mode #crosshair .ch{background:#ffc65c;box-shadow:0 0 6px rgba(255,176,0,.8)}
+body.ascii-mode #hitmarker{color:#ffd98a;text-shadow:0 0 12px rgba(255,176,0,.8)}
+body.ascii-mode #radarWrap span{color:#8a6a2c;letter-spacing:4px}
+
+/* end screens */
+body.ascii-mode #end.win #endTitle{color:#ffc65c;text-shadow:0 0 30px rgba(255,176,0,.6)}
+body.ascii-mode #end.lose #endTitle{color:#ff5a3c;text-shadow:0 0 30px rgba(255,74,42,.6)}
+body.ascii-mode #endKicker{color:#ffb000;letter-spacing:8px}
+body.ascii-mode #endSub{color:#d8b96a}
+body.ascii-mode .end-stats div{background:rgba(8,6,2,.7);border:1px dashed rgba(255,198,92,.35);border-radius:0}
+body.ascii-mode .end-stats b{color:#ffd98a;text-shadow:0 0 12px rgba(255,176,0,.5)}
+body.ascii-mode .end-stats span{color:#8a6a2c}

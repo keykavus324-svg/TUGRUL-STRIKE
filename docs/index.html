@@ -24,11 +24,12 @@ window.addEventListener('unhandledrejection', function (e) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@500;600;700&family=Share+Tech+Mono&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@500;600;700&family=Share+Tech+Mono&display=swap"></noscript>
-  <script type="module" crossorigin src="./assets/index-B5jwB568.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-smj7oLna.css">
+  <script type="module" crossorigin src="./assets/index-BjhHvK6c.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-B8UioTy2.css">
 </head>
 <body>
 <canvas id="game"></canvas>
+<div id="scanlines"></div>
 
 <!-- LOADING -->
 <div id="loading" class="overlay">
@@ -36,6 +37,7 @@ window.addEventListener('unhandledrejection', function (e) {
     <div class="logo-small">TUĞRUL <span>STRIKE</span></div>
     <div class="load-bar-wrap"><div id="loadBar"></div></div>
     <div id="loadText">Motor hazırlanıyor…</div>
+    <div class="load-sys">SYS/7 // TEHDİT: 6 HOSTİL &nbsp;•&nbsp; SİNYAL: OK &nbsp;•&nbsp; GÖREV: SALTLINE</div>
   </div>
 </div>
 
@@ -97,6 +99,9 @@ window.addEventListener('unhandledrejection', function (e) {
     <h2>AYARLAR</h2>
     <label class="set-row">Fare Hassasiyeti <input type="range" id="setSens" min="0.3" max="3" step="0.1" value="1"><span id="sensVal">1.0</span></label>
     <label class="set-row">Görüş Açısı (FOV) <input type="range" id="setFov" min="70" max="110" step="1" value="90"><span id="fovVal">90</span></label>
+    <label class="set-row">Görünüm
+      <select id="setView"><option value="ascii" selected>ASCII (CRT Phosphor)</option><option value="aaa">AAA Fotorealistik</option></select>
+    </label>
     <label class="set-row">Grafik Kalitesi
       <select id="setQuality"><option value="high">Yüksek (AAA)</option><option value="med">Orta</option><option value="low">Düşük (Hızlı)</option></select>
     </label>

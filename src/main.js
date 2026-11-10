@@ -14,6 +14,7 @@ import { EnemyManager } from './enemies.js';
 import { Effects } from './effects.js';
 import { GameAudio } from './audio.js';
 import { UI } from './ui.js';
+import { makeGlyphAtlas, makeAsciiPass, updateAsciiCells } from './ascii.js';
 
 const canvas = document.getElementById('game');
 // Aşama teşhisi: yükleme ekranında nerede takıldığını göster
@@ -53,15 +54,18 @@ let timeLeft = 180, elapsed = 0;
 let stats = { shots: 0, hits: 0, kills: 0, headshots: 0, accuracy: 0, time: '0:00' };
 let justShot = false;
 let menuOrbit = 0;
-let settings = { sens: 1, fov: 90, quality: 'high', mute: false, shake: true };
+let settings = { sens: 1, fov: 90, quality: 'high', mute: false, shake: true, viewMode: 'ascii' };
 
 // ---------- POST ----------
-let composer, bloomPass, gradePass;
+let composer, bloomPass, gradePass, asciiPass;
 function setupPost() {
   composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.32, 0.7, 0.82);
   composer.addPass(bloomPass);
+  const atlas = makeGlyphAtlas();
+  asciiPass = makeAsciiPass(atlas);
+  composer.addPass(asciiPass);
   const grade = new ShaderPass({
     uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uVig: { value: 0.42 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
@@ -94,9 +98,15 @@ say('Aşama 6/7 — Oyun hazırlanıyor…');
 
 function applyQuality() {
   const q = settings.quality;
-  if (q === 'high') { renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); bloomPass.enabled = true; bloomPass.strength = 0.32; }
-  else if (q === 'med') { renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); bloomPass.enabled = true; bloomPass.strength = 0.22; }
-  else { renderer.setPixelRatio(1); bloomPass.enabled = false; }
+  const ascii = settings.viewMode === 'ascii';
+  if (q === 'high') renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  else if (q === 'med') renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  else renderer.setPixelRatio(1);
+  bloomPass.enabled = ascii ? true : q !== 'low';
+  bloomPass.strength = ascii ? 0.5 : (q === 'high' ? 0.32 : 0.22);
+  if (asciiPass) asciiPass.enabled = ascii;
+  updateAsciiCells(asciiPass, innerWidth, innerHeight, q);
+  document.body.classList.toggle('ascii-mode', ascii);
   onResize();
 }
 
@@ -128,6 +138,7 @@ async function boot() {
   refreshMenuStats();
   requestAnimationFrame(loop);
 }
+applyQuality();
 boot();
 
 function refreshMenuStats() {
@@ -235,6 +246,7 @@ document.getElementById('setFov').addEventListener('input', (e) => {
 document.getElementById('setQuality').addEventListener('change', (e) => { settings.quality = e.target.value; applyQuality(); });
 document.getElementById('setMute').addEventListener('change', (e) => { settings.mute = e.target.checked; audio.setMuted(settings.mute); });
 document.getElementById('setShake').addEventListener('change', (e) => { settings.shake = e.target.checked; if (player) player.shakeEnabled = settings.shake; });
+document.getElementById('setView').addEventListener('change', (e) => { settings.viewMode = e.target.value; applyQuality(); });
 
 // touch
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -402,6 +414,7 @@ function loop() {
   const dt = Math.min(0.05, clock.getDelta());
   const now = performance.now() / 1000;
   if (gradePass) gradePass.uniforms.uTime.value = now;
+  if (asciiPass) asciiPass.uniforms.uTime.value = now;
 
   if (state === 'menu' || state === 'ended') {
     // cinematic orbit
@@ -449,4 +462,5 @@ function onResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
   composer.setSize(innerWidth, innerHeight);
+  updateAsciiCells(asciiPass, innerWidth, innerHeight, settings.quality);
 }

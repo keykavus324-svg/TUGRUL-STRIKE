@@ -58,3 +58,7 @@ src/
   audio.js    prosedürel WebAudio sesleri
   ui.js       HUD, radar, pusula, killfeed, ekranlar
 ```
+
+## Görünüm Modları
+- **ASCII (CRT Phosphor)** — varsayılan: tüm 3B sahne gerçek zamanlı karakter atlasına dökülür (32 glif, amber fosfor, tarama çizgileri, vinyet, gren). Arayüz terminal/CRT temasına girer.
+- **AAA Fotorealistik** — orijinal PBR/fotoğraf gerçekçi render. Ayarlar → Görünüm'den değiştir.
