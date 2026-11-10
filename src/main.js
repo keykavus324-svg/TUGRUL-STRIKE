@@ -16,6 +16,9 @@ import { GameAudio } from './audio.js';
 import { UI } from './ui.js';
 
 const canvas = document.getElementById('game');
+// Aşama teşhisi: yükleme ekranında nerede takıldığını göster
+const say = (t) => { const el = document.getElementById('loadText'); if (el) el.textContent = t; };
+say('Aşama 1/7 — WebGL motoru…');
 let renderer;
 try {
   const probe = document.createElement('canvas');
@@ -23,6 +26,7 @@ try {
     throw new Error('Tarayiciniz WebGL desteklemiyor. Guncel bir Chrome/Edge/Firefox ile deneyin.');
   }
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  say('Aşama 2/7 — Renderer…');
 } catch (err) {
   if (window.__gameError) window.__gameError(err.message || String(err));
   throw err;
@@ -39,7 +43,9 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(90, innerWidth / innerHeight, 0.05, 600);
 camera.position.set(0, 6, 40);
 
+say('Aşama 3/7 — Arayüz…');
 const ui = new UI();
+say('Aşama 4/7 — Ses…');
 const audio = new GameAudio();
 let world, player, weapon, enemies, fx;
 let state = 'loading';
@@ -82,7 +88,9 @@ function setupPost() {
   composer.addPass(new OutputPass());
   composer.userData.grade = grade;
 }
+say('Aşama 5/7 — Post-processing…');
 setupPost();
+say('Aşama 6/7 — Oyun hazırlanıyor…');
 
 function applyQuality() {
   const q = settings.quality;
