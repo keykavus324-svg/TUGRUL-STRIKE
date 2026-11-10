@@ -35,6 +35,16 @@ npm run dev      # http://localhost:5173
 npm run build    # üretim derlemesi -> dist/
 ```
 
+## GitHub Pages ile yayınlama
+Site, `docs/` klasöründeki derlenmiş haliyle repoda duruyor.
+Yayınlamak için (bir kez):
+1. GitHub'da repo → **Settings → Pages**
+2. **Source:** "Deploy from a branch" seç
+3. **Branch:** `arena/785e4611-tugrul-strike` + **/docs** → Save
+4. ~1 dakika sonra site canlı: https://keykavus324-svg.github.io/TUGRUL-STRIKE/
+
+Güncelleme sonrası siteyi yenilemek için: `npm run build && cp -r dist/* docs/` + commit/push.
+
 ## Proje yapısı
 ```
 src/
