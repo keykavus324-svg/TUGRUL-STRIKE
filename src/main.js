@@ -87,16 +87,23 @@ async function boot() {
   const bar = document.getElementById('loadBar');
   const txt = document.getElementById('loadText');
   const step = async (p, t) => { bar.style.width = p + '%'; txt.textContent = t; await new Promise(r => setTimeout(r, 30)); };
-  await step(15, 'Dokular üretiliyor…');
-  const T = makeTextures();
-  await step(45, 'Harita inşa ediliyor…');
-  world = new World(scene, T);
-  fx = new Effects(scene);
-  player = new Player(camera, world, audio);
-  weapon = new Weapon(camera, scene, audio, fx);
-  enemies = new EnemyManager(scene, T, world, audio, fx);
-  await step(75, 'Düşmanlar yerleştiriliyor…');
-  await step(100, 'Hazır');
+  try {
+    await step(15, 'Dokular üretiliyor…');
+    const T = makeTextures();
+    await step(45, 'Harita inşa ediliyor…');
+    world = new World(scene, T, renderer);
+    fx = new Effects(scene);
+    player = new Player(camera, world, audio);
+    weapon = new Weapon(camera, scene, audio, fx);
+    enemies = new EnemyManager(scene, T, world, audio, fx);
+    await step(75, 'Düşmanlar yerleştiriliyor…');
+    await step(100, 'Hazır');
+  } catch (err) {
+    console.error(err);
+    txt.textContent = 'Hata: ' + (err && err.message ? err.message : err) + ' — sayfayı yenile';
+    txt.style.color = '#ff5a3c';
+    return;
+  }
   document.getElementById('loading').classList.add('hidden');
   state = 'menu';
   ui.show('menu');

@@ -98,7 +98,7 @@ export class World {
     S.fog = new THREE.FogExp2(0xd8b078, 0.011);
 
     // environment reflections from sky
-    const pmrem = new THREE.PMREMGenerator(S);
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
     const envScene = new THREE.Scene();
     envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50, 16, 12), skyMat.clone()));
     const envRT = pmrem.fromScene(envScene, 0.04);
