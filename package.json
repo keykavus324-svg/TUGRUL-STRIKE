@@ -1,0 +1,28 @@
+{
+  "name": "tugrul-strike",
+  "version": "1.0.0",
+  "description": "TUĞRUL STRIKE — Saltline Operasyonu: küçük harita, AAA sunum, 6 AI düşman",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 5173"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keykavus324-svg/TUGRUL-STRIKE.git"
+  },
+  "keywords": ["fps", "threejs", "game"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/keykavus324-svg/TUGRUL-STRIKE/issues"
+  },
+  "homepage": "https://github.com/keykavus324-svg/TUGRUL-STRIKE#readme",
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

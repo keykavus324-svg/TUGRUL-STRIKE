@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>TUĞRUL STRIKE — Saltline Operasyonu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- LOADING -->
+<div id="loading" class="overlay">
+  <div class="load-inner">
+    <div class="logo-small">TUĞRUL <span>STRIKE</span></div>
+    <div class="load-bar-wrap"><div id="loadBar"></div></div>
+    <div id="loadText">Motor hazırlanıyor…</div>
+  </div>
+</div>
+
+<!-- MAIN MENU -->
+<div id="menu" class="overlay hidden">
+  <div class="menu-bg-grad"></div>
+  <div class="menu-content">
+    <div class="menu-kicker">OPERASYON // SALTLINE</div>
+    <h1 class="game-title">TUĞRUL<br><span>STRIKE</span></h1>
+    <p class="menu-sub">Küçük harita. Büyük savaş. 6 düşman, tek komando.<br>Çöl bileşkesini temizle, hayatta kal.</p>
+    <div class="menu-buttons">
+      <button id="btnPlay" class="btn-primary">▶ &nbsp;OPERASYONA BAŞLA</button>
+      <button id="btnHow" class="btn-ghost">NASIL OYNANIR?</button>
+      <button id="btnSettings" class="btn-ghost">AYARLAR</button>
+    </div>
+    <div class="menu-stats">
+      <div><b id="statBest">—</b><span>EN İYİ SÜRE</span></div>
+      <div><b id="statWins">0</b><span>ZAfer</span></div>
+      <div><b id="statKills">0</b><span>TOPLAM LEŞ</span></div>
+    </div>
+    <div class="menu-foot">WASD Hareket • Fare Nişan • Sol Tık Ateş • Sağ Tık Nişan Al • R Şarjör • Shift Koş</div>
+  </div>
+  <div class="menu-side">
+    <div class="brief-card">
+      <h3>◆ GÖREV BRİFİNGİ</h3>
+      <p><b>Konum:</b> Çöl Bileşkesi “Saltline”, 17:42 yerel saat.</p>
+      <p><b>Görev:</b> Bileşkedeki <b>6 silahlı düşmanı</b> etkisiz hale getir.</p>
+      <p><b>Tehdit:</b> Düşmanlar devriye geziyor; ses ve görüşle alarma geçer.</p>
+      <p><b>İpucu:</b> Kafa vuruşları 4× hasar. Siperleri kullan, cephane harca.</p>
+      <div class="threat">TEHDİT SEVİYESİ <div class="threat-bar"><i style="width:72%"></i></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO -->
+<div id="howto" class="overlay hidden panel-overlay">
+  <div class="panel">
+    <h2>NASIL OYNANIR?</h2>
+    <div class="controls-grid">
+      <div><kbd>W A S D</kbd><span>Hareket</span></div>
+      <div><kbd>FARE</kbd><span>Nişan al / Bak</span></div>
+      <div><kbd>SOL TIK</kbd><span>Ateş</span></div>
+      <div><kbd>SAĞ TIK</kbd><span>Nişan al (ADS)</span></div>
+      <div><kbd>R</kbd><span>Şarjör değiştir</span></div>
+      <div><kbd>SHIFT</kbd><span>Koş</span></div>
+      <div><kbd>SPACE</kbd><span>Zıpla</span></div>
+      <div><kbd>C</kbd><span>Eğil</span></div>
+      <div><kbd>1 / 2</kbd><span>Tüfek / Tabanca</span></div>
+      <div><kbd>ESC</kbd><span>Duraklat</span></div>
+    </div>
+    <p class="panel-note">Tüm düşmanları öldür → zafer. Ölürsen → görev başarısız. Mermi biterse R ile doldur. Düşman mermileri canını azaltır; kırmızı vinyet hasarı gösterir.</p>
+    <button id="btnHowBack" class="btn-primary">GERİ DÖN</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="overlay hidden panel-overlay">
+  <div class="panel">
+    <h2>AYARLAR</h2>
+    <label class="set-row">Fare Hassasiyeti <input type="range" id="setSens" min="0.3" max="3" step="0.1" value="1"><span id="sensVal">1.0</span></label>
+    <label class="set-row">Görüş Açısı (FOV) <input type="range" id="setFov" min="70" max="110" step="1" value="90"><span id="fovVal">90</span></label>
+    <label class="set-row">Grafik Kalitesi
+      <select id="setQuality"><option value="high">Yüksek (AAA)</option><option value="med">Orta</option><option value="low">Düşük (Hızlı)</option></select>
+    </label>
+    <label class="set-row"><input type="checkbox" id="setMute"> Sesi Kapat</label>
+    <label class="set-row"><input type="checkbox" id="setShake" checked> Kamera Sarsıntısı</label>
+    <button id="btnSetBack" class="btn-primary">GERİ DÖN</button>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="crosshair"><span class="ch t"></span><span class="ch b"></span><span class="ch l"></span><span class="ch r"></span><span class="ch dot"></span></div>
+  <div id="hitmarker">✕</div>
+  <div id="dmgVignette"></div>
+  <div id="healVignette"></div>
+
+  <div class="hud-top">
+    <div id="objective" class="hud-box">◉ HEDEF: <b id="objText">6 düşmanı etkisiz hale getir</b></div>
+    <div id="timer" class="hud-box mono">03:00</div>
+    <div id="killfeed"></div>
+  </div>
+
+  <div class="hud-bottom-left">
+    <div class="hud-box health-box">
+      <div class="hp-label">CAN <b id="hpNum">100</b></div>
+      <div class="hp-bar"><i id="hpFill"></i></div>
+      <div class="armor-row">ZIRH <div class="hp-bar small"><i id="armorFill" style="width:50%"></i></div></div>
+    </div>
+    <div id="radarWrap" class="hud-box"><canvas id="radar" width="140" height="140"></canvas><span>RADAR</span></div>
+  </div>
+
+  <div class="hud-bottom-right">
+    <div id="weaponName">TUĞRUL-47</div>
+    <div id="ammo"><b id="ammoMag">30</b><span>/ <i id="ammoRes">120</i></span></div>
+    <div id="fireMode">OTO</div>
+    <div id="reloadHint" class="hidden">R — ŞARJÖR DEĞİŞTİR</div>
+  </div>
+
+  <div id="centerMsg"></div>
+  <div id="compass"><div id="compassStrip"></div><div class="compass-needle"></div></div>
+  <div id="killBanner"></div>
+</div>
+
+<!-- PAUSE -->
+<div id="pause" class="overlay hidden panel-overlay">
+  <div class="panel">
+    <h2>DURAKLATILDI</h2>
+    <button id="btnResume" class="btn-primary">DEVAM ET</button>
+    <button id="btnRestart" class="btn-ghost">YENİDEN BAŞLA</button>
+    <button id="btnQuit" class="btn-ghost">ANA MENÜ</button>
+  </div>
+</div>
+
+<!-- END SCREEN -->
+<div id="end" class="overlay hidden">
+  <div class="end-inner">
+    <div id="endKicker">GÖREV TAMAMLANDI</div>
+    <h1 id="endTitle">ZAFER</h1>
+    <p id="endSub"></p>
+    <div class="end-stats" id="endStats"></div>
+    <div class="menu-buttons">
+      <button id="btnAgain" class="btn-primary">TEKRAR OYNA</button>
+      <button id="btnMenu2" class="btn-ghost">ANA MENÜ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOUCH CONTROLS -->
+<div id="touchUI" class="hidden">
+  <div id="joy"><div id="joyKnob"></div></div>
+  <button id="tFire">ATEŞ</button>
+  <button id="tJump">ZIPLA</button>
+  <button id="tReload">R</button>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

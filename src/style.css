@@ -1,0 +1,128 @@
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0806;font-family:'Rajdhani',sans-serif;color:#f2e9d8;user-select:none}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hidden{display:none!important}
+.mono{font-family:'Share Tech Mono',monospace}
+
+/* ---------- OVERLAYS ---------- */
+.overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}
+#loading{background:radial-gradient(ellipse at center,#1a1208 0%,#070503 70%);z-index:100}
+.load-inner{text-align:center;width:min(420px,80vw)}
+.logo-small{font-family:'Oswald';font-size:28px;letter-spacing:4px}
+.logo-small span{color:#f5a623}
+.load-bar-wrap{height:4px;background:#2a1f10;margin:22px 0 12px;border-radius:2px;overflow:hidden}
+#loadBar{height:100%;width:0%;background:linear-gradient(90deg,#f5a623,#ffd27a);transition:width .3s}
+#loadText{color:#a89878;font-size:14px;letter-spacing:2px}
+
+#menu{justify-content:flex-start;padding:0 6vw;z-index:40}
+.menu-bg-grad{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,3,1,.88) 0%,rgba(5,3,1,.55) 45%,rgba(5,3,1,.05) 75%);pointer-events:none}
+.menu-content{position:relative;max-width:560px;animation:rise .8s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.menu-kicker{letter-spacing:6px;color:#f5a623;font-weight:700;font-size:13px;margin-bottom:10px}
+.game-title{font-family:'Oswald';font-size:clamp(56px,9vw,110px);line-height:.9;letter-spacing:2px;text-shadow:0 6px 40px rgba(0,0,0,.7)}
+.game-title span{color:#f5a623;-webkit-text-stroke:1px #ffb84d}
+.menu-sub{font-size:18px;color:#d8c9a8;margin:16px 0 28px;line-height:1.5}
+.menu-buttons{display:flex;flex-direction:column;gap:10px;max-width:340px}
+.btn-primary,.btn-ghost{font-family:'Rajdhani';font-weight:700;letter-spacing:2px;font-size:16px;padding:14px 22px;cursor:pointer;border:none;transition:.2s;text-align:center}
+.btn-primary{background:linear-gradient(135deg,#f5a623,#e07b1f);color:#1a0f00;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.btn-primary:hover{filter:brightness(1.15);transform:translateX(4px)}
+.btn-ghost{background:rgba(255,255,255,.06);color:#e8dcc0;border:1px solid rgba(245,166,35,.35);clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.btn-ghost:hover{background:rgba(245,166,35,.15)}
+.menu-stats{display:flex;gap:28px;margin-top:30px}
+.menu-stats div{display:flex;flex-direction:column}
+.menu-stats b{font-family:'Oswald';font-size:26px;color:#f5a623}
+.menu-stats span{font-size:11px;letter-spacing:2px;color:#a89878}
+.menu-foot{margin-top:26px;font-size:12px;letter-spacing:1px;color:#8a7a5c}
+.menu-side{position:absolute;right:5vw;top:50%;transform:translateY(-50%);width:300px}
+.brief-card{background:rgba(10,7,3,.72);border:1px solid rgba(245,166,35,.3);border-left:4px solid #f5a623;padding:20px;backdrop-filter:blur(8px)}
+.brief-card h3{font-family:'Oswald';letter-spacing:2px;color:#f5a623;margin-bottom:12px;font-size:15px}
+.brief-card p{font-size:14px;line-height:1.55;color:#d8c9a8;margin-bottom:8px}
+.threat{margin-top:14px;font-size:12px;letter-spacing:2px}
+.threat-bar{height:6px;background:#2a1f10;margin-top:6px}
+.threat-bar i{display:block;height:100%;background:linear-gradient(90deg,#f5a623,#e0391f)}
+@media(max-width:900px){.menu-side{display:none}}
+
+.panel-overlay{background:rgba(3,2,1,.7);backdrop-filter:blur(4px)}
+.panel{background:rgba(14,10,5,.95);border:1px solid rgba(245,166,35,.35);padding:32px;width:min(520px,92vw);max-height:88vh;overflow:auto}
+.panel h2{font-family:'Oswald';letter-spacing:3px;color:#f5a623;margin-bottom:20px}
+.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.controls-grid div{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);padding:10px}
+.controls-grid span{font-size:14px;color:#d8c9a8}
+kbd{background:#2a1f10;border:1px solid #f5a62355;border-bottom-width:3px;padding:3px 8px;font-family:'Share Tech Mono';font-size:12px;color:#ffd27a;white-space:nowrap}
+.panel-note{color:#a89878;font-size:14px;line-height:1.5;margin-bottom:18px}
+.set-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:15px}
+.set-row input[type=range]{flex:1;accent-color:#f5a623}
+.set-row select{background:#1a1208;color:#f2e9d8;border:1px solid #f5a62355;padding:8px;font-family:inherit}
+.panel .btn-primary,.panel .btn-ghost{width:100%;margin-top:10px}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;inset:0;z-index:20;pointer-events:none}
+#crosshair{position:absolute;left:50%;top:50%;width:40px;height:40px;transform:translate(-50%,-50%)}
+#crosshair .ch{position:absolute;background:#fff;box-shadow:0 0 4px #000}
+#crosshair .t{left:50%;top:0;width:2px;height:10px;transform:translateX(-50%)}
+#crosshair .b{left:50%;bottom:0;width:2px;height:10px;transform:translateX(-50%)}
+#crosshair .l{left:0;top:50%;width:10px;height:2px;transform:translateY(-50%)}
+#crosshair .r{right:0;top:50%;width:10px;height:2px;transform:translateY(-50%)}
+#crosshair .dot{left:50%;top:50%;width:2px;height:2px;transform:translate(-50%,-50%)}
+#crosshair.ads .t,#crosshair.ads .b,#crosshair.ads .l,#crosshair.ads .r{opacity:.25}
+#hitmarker{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);font-size:26px;color:#fff;opacity:0;text-shadow:0 0 6px #000}
+#hitmarker.kill{color:#ff3b1f;font-size:32px}
+#dmgVignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(200,10,0,.55) 100%);opacity:0;transition:opacity .15s}
+#healVignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(80,255,140,.25) 100%);opacity:0}
+.hud-top{position:absolute;top:18px;left:0;right:0;display:flex;justify-content:center;gap:14px;align-items:flex-start}
+.hud-box{background:rgba(8,6,3,.62);border:1px solid rgba(245,166,35,.25);padding:8px 16px;font-size:14px;letter-spacing:1px;backdrop-filter:blur(4px)}
+#objective b{color:#f5a623}
+#timer{font-size:20px;min-width:90px;text-align:center}
+#timer.low{color:#ff5a3c;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.5}}
+#killfeed{position:absolute;right:18px;top:0;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+#killfeed div{background:rgba(8,6,3,.7);border-right:3px solid #f5a623;padding:5px 12px;font-size:13px;animation:slidein .3s}
+@keyframes slidein{from{transform:translateX(30px);opacity:0}}
+.hud-bottom-left{position:absolute;left:18px;bottom:18px;display:flex;gap:12px;align-items:flex-end}
+.health-box{min-width:220px}
+.hp-label{font-size:13px;letter-spacing:2px}
+.hp-label b{font-family:'Oswald';font-size:30px;color:#fff;margin-left:8px}
+.hp-bar{height:8px;background:#2a1f10;margin:6px 0}
+.hp-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7ddb4a,#b6f09a);transition:width .25s}
+.hp-bar i.hurt{background:linear-gradient(90deg,#e0391f,#ff7a3c)}
+.hp-bar.small{height:5px;flex:1}
+.armor-row{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:2px;color:#a89878}
+#armorFill{background:linear-gradient(90deg,#4aa8db,#9ad6f5)}
+#radarWrap{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px}
+#radarWrap span{font-size:10px;letter-spacing:3px;color:#a89878}
+.hud-bottom-right{position:absolute;right:18px;bottom:18px;text-align:right}
+#weaponName{font-family:'Oswald';letter-spacing:3px;font-size:15px;color:#f5a623}
+#ammo{font-family:'Oswald';font-size:44px;line-height:1}
+#ammo span{font-size:20px;color:#a89878}
+#ammo.low b{color:#ff5a3c}
+#fireMode{font-size:12px;letter-spacing:3px;color:#a89878}
+#reloadHint{margin-top:6px;color:#ffd27a;font-weight:700;letter-spacing:2px;animation:pulse 1s infinite}
+#centerMsg{position:absolute;left:50%;top:62%;transform:translateX(-50%);font-family:'Oswald';font-size:22px;letter-spacing:3px;color:#ffd27a;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .3s;text-align:center}
+#compass{position:absolute;top:64px;left:50%;transform:translateX(-50%);width:340px;height:26px;overflow:hidden;background:rgba(8,6,3,.5);border:1px solid rgba(255,255,255,.12)}
+#compassStrip{position:absolute;top:0;height:100%;white-space:nowrap;font-family:'Share Tech Mono';font-size:13px;color:#d8c9a8;line-height:26px}
+.compass-needle{position:absolute;left:50%;top:0;width:2px;height:100%;background:#f5a623;transform:translateX(-50%)}
+#killBanner{position:absolute;left:50%;top:34%;transform:translateX(-50%);font-family:'Oswald';font-size:34px;letter-spacing:4px;color:#ffd27a;text-shadow:0 4px 20px #000;opacity:0;transition:.3s}
+
+/* ---------- END ---------- */
+#end{background:radial-gradient(ellipse at center,rgba(20,12,2,.55),rgba(3,2,1,.9));z-index:60}
+.end-inner{text-align:center;max-width:560px;padding:20px;animation:rise .6s both}
+#endKicker{letter-spacing:6px;color:#f5a623;font-weight:700}
+#endTitle{font-family:'Oswald';font-size:clamp(64px,12vw,120px);line-height:1}
+#end.lose #endTitle{color:#ff4a2a}
+#end.win #endTitle{color:#ffd27a}
+#endSub{color:#d8c9a8;font-size:17px;margin:10px 0 24px}
+.end-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px}
+.end-stats div{background:rgba(255,255,255,.05);border:1px solid rgba(245,166,35,.25);padding:14px}
+.end-stats b{display:block;font-family:'Oswald';font-size:26px;color:#f5a623}
+.end-stats span{font-size:11px;letter-spacing:2px;color:#a89878}
+#end .menu-buttons{margin:0 auto}
+
+/* ---------- TOUCH ---------- */
+#touchUI{position:fixed;inset:0;z-index:30;pointer-events:none}
+#joy{position:absolute;left:24px;bottom:110px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);pointer-events:auto}
+#joyKnob{position:absolute;left:50%;top:50%;width:52px;height:52px;border-radius:50%;background:rgba(245,166,35,.5);transform:translate(-50%,-50%)}
+#touchUI button{position:absolute;pointer-events:auto;width:76px;height:76px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;font-family:inherit;font-weight:700}
+#tFire{right:24px;bottom:110px;background:rgba(224,57,31,.45)}
+#tJump{right:116px;bottom:60px}
+#tReload{right:36px;bottom:210px;width:56px;height:56px}
+@media(pointer:fine){#touchUI{display:none!important}}
