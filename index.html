@@ -23,7 +23,7 @@ window.addEventListener('unhandledrejection', function (e) {
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Oswald:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/src/style.css">
+<link rel="stylesheet" href="./src/style.css">
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -170,6 +170,17 @@ window.addEventListener('unhandledrejection', function (e) {
   <button id="tReload">R</button>
 </div>
 
-<script type="module" src="/src/main.js"></script>
+<script type="module" src="./src/main.js?v=3"></script>
+<script>
+// Fallback: loading HUD takılı kalırsa nedenini ekrana yaz
+setTimeout(function () {
+  var loading = document.getElementById('loading');
+  var t = document.getElementById('loadText');
+  if (loading && !loading.classList.contains('hidden') && t && t.textContent.indexOf('Hata') !== 0) {
+    t.textContent = 'Yükleme beklenenden uzun sürüyor — Ctrl+Shift+R ile sert yenile (F12 > Console’da kırmızı hatalara bak)';
+    t.style.color = '#ffd27a';
+  }
+}, 10000);
+</script>
 </body>
 </html>

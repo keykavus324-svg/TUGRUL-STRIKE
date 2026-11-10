@@ -171,5 +171,16 @@ window.addEventListener('unhandledrejection', function (e) {
   <button id="tReload">R</button>
 </div>
 
+<script>
+// Fallback: loading HUD takılı kalırsa nedenini ekrana yaz
+setTimeout(function () {
+  var loading = document.getElementById('loading');
+  var t = document.getElementById('loadText');
+  if (loading && !loading.classList.contains('hidden') && t && t.textContent.indexOf('Hata') !== 0) {
+    t.textContent = 'Yükleme beklenenden uzun sürüyor — Ctrl+Shift+R ile sert yenile (F12 > Console’da kırmızı hatalara bak)';
+    t.style.color = '#ffd27a';
+  }
+}, 10000);
+</script>
 </body>
 </html>
